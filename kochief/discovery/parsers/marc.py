@@ -359,7 +359,10 @@ def get_record(marc_record, ils=None):
         # good idea, but need to convert to unicode first
         #title_sort = unicodedata.normalize('NFKD', title_sort)
         record['title_sort'] = title_sort
-        record['title'] = marc_record['245']['a'].strip(' /:;')
+        if marc_record.title() is not None:
+            record['title'] = marc_record['245']['a'].strip(' /:;')
+        else:
+            record['title'] = full_title
     
     if marc_record['260']:
         record['imprint'] = marc_record['260'].format_field()
@@ -472,8 +475,12 @@ def write_csv(marc_file_handle, csv_file_handle, ils=settings.ILS):
                     row = get_row(record)
                     writer.writerow(row)
             except:
+                if marc_record.title() is not None:
+                    title = marc_record.title()
+                else:
+                    title = marc_record['245'].format_field()
                 sys.stderr.write("\nError in MARC record #%s (%s):\n" % 
-                        (count, marc_record.title().encode('ascii', 'ignore')))
+                        (count, title.encode('ascii', 'ignore')))
                 raise
             else:
                 if count % 1000:
