@@ -219,11 +219,11 @@ def parse_008(record, marc_record):
                 record['audience'] = ''
 
         language_code = field008[35:38]
-        if language_code != '   ':
-            try:
-                record['language'] = marc_maps.LANGUAGE_CODING_MAP[language_code]
-            except KeyError:
-                record['language'] = ''
+        try:
+            record['language'] = marc_maps.LANGUAGE_CODING_MAP[language_code]
+        except KeyError:
+            record['language'] = ''
+        elsed
     return record
 
 def id_match(id_fields, id_re):
