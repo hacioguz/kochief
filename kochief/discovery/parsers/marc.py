@@ -223,7 +223,6 @@ def parse_008(record, marc_record):
             record['language'] = marc_maps.LANGUAGE_CODING_MAP[language_code]
         except KeyError:
             record['language'] = ''
-        elsed
     return record
 
 def id_match(id_fields, id_re):
