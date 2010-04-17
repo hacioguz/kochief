@@ -303,6 +303,7 @@ def get_record(marc_record, ils=None):
         elif ils == 'Unicorn':
             record['id'] = marc_record['35']['a']
         else:
+            # Includes Aleph and Voyager.
             record['id'] = marc_record['001'].value()
     except AttributeError:
         # try other fields for id?
