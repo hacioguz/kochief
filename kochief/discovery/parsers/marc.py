@@ -25,6 +25,7 @@ import pymarc
 import re
 import sys
 import time
+import unicodedata
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -44,6 +45,7 @@ FIELDNAMES = [
     'audience',
     'author',
     'bib_num',
+    'collection',
     'contents',
     'corporate_name',
     'ctrl_num',
@@ -90,7 +92,11 @@ class RowDict(dict):
             return ''
         if hasattr(value, '__iter__'):
             value = '|'.join([x for x in value if x])
+        # converting to utf8 with yaz-marcdump instead -- it handles
+        # oddities better
         #return pymarc.marc8.marc8_to_unicode(value).encode('utf8')
+        # converting to NFC form lessens character encoding issues 
+        value = unicodedata.normalize('NFC', unicode(value, 'utf8'))
         return value.encode('utf8')
 
 def normalize(value):
@@ -442,7 +448,8 @@ def get_row(record):
     row = RowDict(record)
     return row
 
-def write_csv(marc_file_handle, csv_file_handle, ils=settings.ILS):
+def write_csv(marc_file_handle, csv_file_handle, collections=None, 
+        ils=settings.ILS):
     """
     Convert a MARC dump file to a CSV file.
     """
@@ -472,6 +479,8 @@ def write_csv(marc_file_handle, csv_file_handle, ils=settings.ILS):
             try:
                 record = get_record(marc_record, ils=ils)
                 if record:  # skip when get_record returns None
+                    if collections:
+                        record['collection'] = collections
                     row = get_row(record)
                     writer.writerow(row)
             except:

@@ -173,6 +173,11 @@ INDEX_FACETS = [
 # Facet display in the results sidebar.
 FACETS = [
     { 
+        'name': ugettext('Collection'), 
+        'field': 'collection', 
+        'sort_by_count': True, 
+    }, 
+    { 
         'name': ugettext('Name'), 
         'field': 'name', 
         'sort_by_count': True, 

@@ -53,8 +53,8 @@
      <int name="ps">100</int>
     </lst>
   </requestHandler>
-  <requestHandler name="/update/csv" class="solr.CSVRequestHandler" startup="lazy">
-  </requestHandler>
+  <requestHandler name="/update/csv" class="solr.CSVRequestHandler" startup="lazy"></requestHandler>
+  <requestHandler name="/update" class="solr.XmlUpdateRequestHandler"></requestHandler>
   <requestDispatcher handleSelect="true" >
     <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048" />
   </requestDispatcher>
