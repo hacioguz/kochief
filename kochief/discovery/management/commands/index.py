@@ -26,6 +26,7 @@ import os
 import sys
 import time
 import urllib
+import urllib2
 
 try:
     import xml.etree.ElementTree as et  # builtin as of Python 2.5
@@ -39,10 +40,15 @@ CSV_FILE = 'tmp.csv'
 
 class Command(mb.BaseCommand):
     option_list = mb.BaseCommand.option_list + (
+        optparse.make_option('-c', '--collection', 
+            action='append',
+            dest='collections',
+            metavar='COLLECTION', 
+            help='Add COLLECTION label to docs as they are indexed. More than one collection can be applied (e.g., --collection=books --collection=oversized). Overwrites values in the "collection" field.'),
         optparse.make_option('-n', '--new', 
             action='store_true',
             dest='new',
-            help='Create a new index.  If the index already exists, it will be replaced.'),
+            help='Create a new index.  If the index already exists, all docs in the index will be deleted before this indexing.'),
         optparse.make_option('-p', '--parser',
             dest='parser',
             metavar='PARSER', 
@@ -54,8 +60,13 @@ class Command(mb.BaseCommand):
     def handle(self, *file_or_urls, **options):
         new = options.get('new')
         if new:
-            # create/replace index
-            pass
+            data = '<delete><query>*:*</query></delete>'
+            r = urllib2.Request(conf.settings.SOLR_URL + 'update')
+            r.add_header('Content-Type', 'text/xml')
+            r.add_data(data)
+            f = urllib2.urlopen(r)
+            print "Solr response to deletion request:"
+            print f.read()
         if file_or_urls:
             parser = options.get('parser')
             module = None
@@ -76,7 +87,8 @@ class Command(mb.BaseCommand):
             data_handle = urllib.urlopen(file_or_url)
             try:
                 csv_handle = open(CSV_FILE, 'w')
-                record_count = module.write_csv(data_handle, csv_handle)
+                record_count = module.write_csv(data_handle, csv_handle, 
+                        collections=options.get('collections'))
             finally:
                 csv_handle.close()
             t2 = time.time()
@@ -124,9 +136,9 @@ def load_solr(csv_file):
     update_url = conf.settings.SOLR_URL + 'update/csv?%s'
     print "Loading records into Solr ..."
     try: 
-        output = urllib.urlopen(update_url % params)
+        response = urllib.urlopen(update_url % params)
     except IOError:
         raise IOError, 'Unable to connect to the Solr instance.'
-    print "Solr response:\n"
-    print output.read()
+    print "Solr response:"
+    print response.read()
 
