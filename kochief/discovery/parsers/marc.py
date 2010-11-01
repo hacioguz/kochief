@@ -26,9 +26,11 @@ import re
 import sys
 import time
 import unicodedata
+import urllib
 
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.utils import simplejson
 
 try:
     set
@@ -483,10 +485,17 @@ def write_csv(marc_file_handle, csv_file_handle, collections=None,
                 record = get_record(marc_record, ils=ils)
                 if record:  # skip when get_record returns None
                     if collections:
+                        new_collections = []
+                        old_record = get_old_record(record['id'])
+                        if old_record:
+                            old_collections = old_record.get('collection')
+                            if old_collections:
+                                new_collections.extend(old_collections)
+                        new_collections.extend(collections)
                         try:
-                            record['collection'].extend(collections)
+                            record['collection'].extend(new_collections)
                         except (AttributeError, KeyError):
-                            record['collection'] = collections
+                            record['collection'] = new_collections
                     row = get_row(record)
                     writer.writerow(row)
             except:
@@ -507,4 +516,29 @@ def write_csv(marc_file_handle, csv_file_handle, collections=None,
         csv_file_handle.close()
     sys.stderr.write("\nProcessed %s records.\n" % count)
     return count
+
+def get_old_record(id):
+    id_query = 'id:%s' % id
+    params = [
+        ('fq', id_query.encode('utf8')),
+        ('q.alt', '*:*'),
+        ('qt', 'dismax'),
+        ('wt', 'json'),
+    ]
+    urlparams = urllib.urlencode(params)
+    url = '%sselect?%s' % (settings.SOLR_URL, urlparams)
+    try:
+        solr_response = urllib.urlopen(url)
+    except IOError:
+        raise IOError, 'Unable to connect to the Solr instance.'
+    try:
+        response = simplejson.load(solr_response)
+    except ValueError, e:
+        print urllib.urlopen(url).read()
+        raise ValueError, 'Solr response was not a valid JSON object.'
+    try:
+        doc = response['response']['docs'][0]
+    except IndexError:
+        doc = None
+    return doc
 

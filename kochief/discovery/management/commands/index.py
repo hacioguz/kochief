@@ -61,7 +61,7 @@ class Command(mb.BaseCommand):
         new = options.get('new')
         if new:
             data = '<delete><query>*:*</query></delete>'
-            r = urllib2.Request(conf.settings.SOLR_URL + 'update')
+            r = urllib2.Request(conf.settings.SOLR_URL + 'update?commit=true')
             r.add_header('Content-Type', 'text/xml')
             r.add_data(data)
             f = urllib2.urlopen(r)
