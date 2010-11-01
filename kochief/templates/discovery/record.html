@@ -192,6 +192,14 @@
             <span>{{ doc.format }}</span>
           </div>
         {% endif %}
+        {% if doc.collection %}
+          <div class="collections">
+            <span class="metadata">{% trans "Collections:" %}</span>
+            {% for collection in doc.collection %}
+              <a href="{% new_limit "collection" collection %}">{{ collection }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
         <div class="holdings">
           <span class="metadata">{% trans "Holdings:" %}</span>
           {% if MAJAX_URL %}
