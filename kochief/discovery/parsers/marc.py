@@ -95,8 +95,11 @@ class RowDict(dict):
         # converting to utf8 with yaz-marcdump instead -- it handles
         # oddities better
         #return pymarc.marc8.marc8_to_unicode(value).encode('utf8')
+        # convert to unicode if value is a string
+        if type(value) == type(''):
+            value = unicode(value, 'utf8')
         # converting to NFC form lessens character encoding issues 
-        value = unicodedata.normalize('NFC', unicode(value, 'utf8'))
+        value = unicodedata.normalize('NFC', value)
         return value.encode('utf8')
 
 def normalize(value):
