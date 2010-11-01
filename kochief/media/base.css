@@ -60,11 +60,14 @@ ul {
 .format .metadata {
   display: none;
 }
-.format.eBook a {
-  background: url(icons/ebook.png) no-repeat; 
+.format.CD-ROM a {
+  background: url(icons/disc.png) no-repeat; 
 }
 .format.DVD a {
-  background: url(icons/dvd.png) no-repeat; 
+  background: url(icons/disc.png) no-repeat; 
+}
+.format.eBook a {
+  background: url(icons/ebook.png) no-repeat; 
 }
 .format.Videocassette a {
   background: url(icons/vhs.png) no-repeat; 
