@@ -483,7 +483,10 @@ def write_csv(marc_file_handle, csv_file_handle, collections=None,
                 record = get_record(marc_record, ils=ils)
                 if record:  # skip when get_record returns None
                     if collections:
-                        record['collection'] = collections
+                        try:
+                            record['collection'].extend(collections)
+                        except (AttributeError, KeyError):
+                            record['collection'] = collections
                     row = get_row(record)
                     writer.writerow(row)
             except:

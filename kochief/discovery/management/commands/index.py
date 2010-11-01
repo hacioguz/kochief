@@ -44,7 +44,7 @@ class Command(mb.BaseCommand):
             action='append',
             dest='collections',
             metavar='COLLECTION', 
-            help='Add COLLECTION label to docs as they are indexed. More than one collection can be applied (e.g., --collection=books --collection=oversized). Overwrites values in the "collection" field.'),
+            help='Append COLLECTIONs to "collection" field on docs as they are indexed. More than one collection can be applied (e.g., --collection=books --collection=oversized).'),
         optparse.make_option('-n', '--new', 
             action='store_true',
             dest='new',
