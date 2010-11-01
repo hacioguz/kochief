@@ -266,7 +266,8 @@ def get_solr_response(params):
     try:
         response = simplejson.load(solr_response)
     except ValueError, e:
-        solr_response = urllib.urlopen(url).read()
+        # Assign so error is in variables at Django error screen
+        solr_error = urllib.urlopen(url).read()
         raise ValueError, 'Solr response was not a JSON object.'
     return url, response
 
