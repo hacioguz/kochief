@@ -343,8 +343,9 @@ def get_search_results(request):
                     args=[record['id']])
             
         #needed for amazon book covers and isbn to be displayable
-        if 'isbn' in record:
-            record['isbn_numeric'] = ''.join( [ x for x in record['isbn'] if ( x.isdigit() or x.lower() == "x" ) ] )
+        isbn_list = record.get('isbn')
+        if isbn_list:
+            record['isbn_numeric'] = isbn_list[0]
         #make an array out of Serials Solutions Name and URL
         if 'SSdata' in record:
             record['SSurldetails']=[]
