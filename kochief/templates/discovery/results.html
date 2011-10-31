@@ -146,11 +146,9 @@
             <abbr class="unapi-id" title="{{ doc.id }}"></abbr>
             <div class="cover">
               <a href="{{ doc.record_url }}">
-                {% if doc.upc %}
-                  <img src="http://worldcat.org/wcpa/servlet/DCARead?standardNo={{ doc.upc|slice:":-1" }}&amp;standardNoType=6" /><!--alt="{{ doc.title }}"/>-->
-                {% else %}{% if doc.isbn_numeric %}
-                  <img src="http://images.amazon.com/images/P/{{ doc.isbn_numeric }}.01._THUMBZZZ_PB_PU_PU-5_.jpg" /><!-- alt="{{ doc.title }}"/>-->
-                {% endif %}{% endif %}
+                {% if doc.isbn_numeric %}
+                  <img src="http://images.amazon.com/images/P/{{ doc.isbn_numeric }}.01._THUMBZZZ_PB_PU_PU-5_.jpg" alt="{{ doc.title }}"/>
+                {% endif %}
               </a>
             </div>
             <div class="recordinfo">
